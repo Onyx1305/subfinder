@@ -3,18 +3,21 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 from colorama import Fore, Style, init
 import os
+import threading
 
 init(autoreset=True)
+print_lock = threading.Lock()
 
 def request(sub_domain, timeout):
     try:
         url = "http://" + sub_domain
         response = requests.get(url, timeout=timeout)
-        if response.status_code == 200:
-            print(f"{Fore.GREEN}[+] {sub_domain} --> {response.status_code}")
-            return sub_domain
-        else:
-            print(f"{Fore.YELLOW}[-] {sub_domain} --> {response.status_code}")
+        with print_lock:
+            if response.status_code == 200:
+                print(f"{Fore.GREEN}[+] {sub_domain} --> {response.status_code}")
+                return sub_domain
+            else:
+                print(f"{Fore.YELLOW}[-] {sub_domain} --> {response.status_code}")
     except requests.exceptions.RequestException:
         pass
     
