@@ -1,17 +1,91 @@
-# Subdomain Enumeration Tool
+# 🔍 Subdomain Finder - Enhanced (Multithreaded)
 
-## Description
-This Python script is a subdomain enumeration tool that helps identify valid subdomains for a given domain by using a wordlist. It sends HTTP requests to potential subdomains and reports those that return a 200 OK status, indicating the subdomain is active.
+A fast and simple Python tool to discover subdomains using a wordlist.  
+It supports multithreading, timeout control, colored output, and graceful exit on `Ctrl+C`.
 
-## Features
-- Enumerates subdomains for a given domain.
-- Uses a custom wordlist or a default `subdomains.txt` file.
-- Displays valid subdomains that respond with a status code of 200.
+---
 
-## Requirements
-- Python 3.x
-- Required Python modules: `requests`, `argparse`
+## 🚀 Features
 
-## Installation
-1. Clone the repository to your local machine:
+- ✅ Multithreaded subdomain scanning
+- ✅ Timeout handling for each request
+- ✅ Colored terminal output using `colorama`
+- ✅ Graceful exit on user interruption (`Ctrl+C`)
+- ✅ Saves discovered subdomains to `results.txt`
+
+---
+
+## 🛠️ Requirements
+
+- Python 3.6+
+- Modules:
+  - `requests`
+  - `colorama`
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Or manually:
+
+```bash
+pip install requests colorama
+```
+
+---
+
+## 📂 Usage
+
+```bash
+python subfinder.py example.com -w wordlist.txt -t 30 --timeout 3
+```
+
+### 🔧 Arguments
+
+| Argument           | Description                              | Default          |
+|--------------------|------------------------------------------|------------------|
+| `domain`           | The target domain                        | *(required)*     |
+| `-w`, `--wordlist` | Path to the subdomain wordlist file      | `subdomains.txt` |
+| `-t`, `--threads`  | Number of threads to use                 | `20`             |
+| `--timeout`        | Timeout for each request (in seconds)    | `2`              |
+
+---
+
+## 📝 Example
+
+```bash
+python subfinder.py google.com -w subdomains.txt -t 50 --timeout 2
+```
+
+---
+
+## 📄 Output
+
+Discovered subdomains with status code `200` are saved in:
+
+```
+results.txt
+```
+
+---
+
+## 💡 Note
+
+- Make sure to provide a valid `subdomains.txt` wordlist.
+- This tool uses HTTP (`http://`). For HTTPS subdomains or advanced scanning, you can modify the `request()` function.
+
+---
+
+## 📜 License
+
+This project is open-source and free to use for educational and personal use.
+
+---
+
+## 🙋 Author
+
+**Dipon (aka Onyx)**  
+Feel free to contribute, suggest features, or report issues.
 
