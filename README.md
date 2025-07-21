@@ -74,7 +74,6 @@ results.txt
 ## 💡 Note
 
 - Make sure to provide a valid `subdomains.txt` wordlist.
-- This tool uses HTTP (`http://`). For HTTPS subdomains or advanced scanning, you can modify the `request()` function.
 
 ---
 
