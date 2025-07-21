@@ -11,7 +11,7 @@ It supports multithreading, timeout control, colored output, and graceful exit o
 - ✅ Timeout handling for each request
 - ✅ Colored terminal output using `colorama`
 - ✅ Graceful exit on user interruption (`Ctrl+C`)
-- ✅ Saves discovered subdomains to `results.txt`
+- ✅ Saves discovered subdomains to output file if specified
 
 ---
 
@@ -39,7 +39,7 @@ pip install requests colorama
 ## 📂 Usage
 
 ```bash
-python subfinder.py example.com -w wordlist.txt -t 30 --timeout 3
+python subfinder.py example.com -w wordlist.txt -t 30 --timeout 3 -o results.txt
 ```
 
 ### 🔧 Arguments
@@ -50,28 +50,25 @@ python subfinder.py example.com -w wordlist.txt -t 30 --timeout 3
 | `-w`, `--wordlist` | Path to the subdomain wordlist file      | `subdomains.txt` |
 | `-t`, `--threads`  | Number of threads to use                 | `20`             |
 | `--timeout`        | Timeout for each request (in seconds)    | `2`              |
+| `-o`, `--output`   | Output file to save discovered subdomains | `None`           |
 
 ---
 
 ## 📝 Example
 
 ```bash
-python subfinder.py google.com -w subdomains.txt -t 50 --timeout 2
+python subfinder.py google.com -w subdomains.txt -t 50 --timeout 2 -o found.txt
 ```
 
 ---
 
 ## 📄 Output
 
-Discovered subdomains with status code `200` are saved in:
-
-```
-results.txt
-```
+Discovered subdomains with status code `200` are saved in the specified output file.
 
 ---
 
-## 💡 Note
+## 💡 Notes
 
 - Make sure to provide a valid `subdomains.txt` wordlist.
 
@@ -87,4 +84,3 @@ This project is open-source and free to use for educational and personal use.
 
 **Dipon (aka Onyx)**  
 Feel free to contribute, suggest features, or report issues.
-
