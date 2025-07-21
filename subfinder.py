@@ -1,34 +1,61 @@
 import requests
 import argparse
-def request(sub_domain):
+from concurrent.futures import ThreadPoolExecutor
+from colorama import Fore, Style, init
+import os
+
+init(autoreset=True)
+
+def request(sub_domain, timeout):
     try:
-        response=requests.get("http://"+sub_domain)
-        if response.status_code==200:
-            print(f"[+] {sub_domain}-------->{response.status_code}")
-    except:
+        url = "http://" + sub_domain
+        response = requests.get(url, timeout=timeout)
+        if response.status_code == 200:
+            print(f"{Fore.GREEN}[+] {sub_domain} --> {response.status_code}")
+            return sub_domain
+        else:
+            print(f"{Fore.YELLOW}[-] {sub_domain} --> {response.status_code}")
+    except requests.exceptions.RequestException:
         pass
-try:
-    parser=argparse.ArgumentParser()
-    parser.add_argument("domain",help="provide domain name")
-    parser.add_argument("-w","--wordlist",help="provide wordlist")
-    args=parser.parse_args()
-    if args.wordlist:
-        with open(args.wordlist,"r") as wordlist:
-            for line in wordlist:
-                word=line.strip()
-                target_url=word+"."+args.domain
-                request(target_url)
-    else:
-        with open("subdomains.txt","r") as wordlist:
-            for line in wordlist:
-                word=line.strip()
-                target_url=word+"."+args.domain
-                request(target_url)
-except Exception as e:
-    print(e)
-        
+    
+def load_wordlist(wordlist_path):
+    try:
+        with open(wordlist_path, "r") as file:
+            return [line.strip() for line in file]
+    except FileNotFoundError:
+        print(f"{Fore.RED}[-] Wordlist file not found!")
+        return []
 
+def run(domain, wordlist_path, threads=20, timeout=2):
+    wordlist = load_wordlist(wordlist_path)
+    if not wordlist:
+        return
 
+    subdomains = [f"{word}.{domain}" for word in wordlist]
 
+    print(f"{Fore.CYAN}[*] Scanning {len(subdomains)} subdomains on {domain}...\n")
+    found_subdomains = []
 
+    with ThreadPoolExecutor(max_workers=threads) as executor:
+        results = executor.map(lambda sub: request(sub, timeout), subdomains)
 
+    with open("results.txt", "w") as result_file:
+        for res in results:
+            if res:
+                result_file.write(res + "\n")
+
+    print(f"\n{Fore.GREEN}[+] Scan completed. Results saved to results.txt")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Subdomain Finder - Enhanced")
+    parser.add_argument("domain", help="Target domain name (example.com)")
+    parser.add_argument("-w", "--wordlist", help="Path to wordlist", default="subdomains.txt")
+    parser.add_argument("-t", "--threads", help="Number of threads (default=20)", type=int, default=20)
+    parser.add_argument("--timeout", help="Request timeout in seconds (default=2)", type=int, default=2)
+
+    args = parser.parse_args()
+    try:
+        run(args.domain, args.wordlist, args.threads, args.timeout)
+    except KeyboardInterrupt:
+        print(f"\n{Fore.RED}[!] Scan interrupted by user. Exiting gracefully.")
+        exit(0)
